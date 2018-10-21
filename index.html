@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Character Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
+    <style>
+        span {
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="section">
+        <div class="container">
+            <div id="app" class="content">
+                <h1 class="title is-1">Character Generator</h1>
+                <p>Ready to generate a new character? Click the button.</p>
+                <button v-on:click="refreshCharacter" class="is-primary button is-medium">Generate</button>
+
+                <h2 class="title is-2">{{ character.firstName }} {{ character.lastName }}</h2>
+                <p><span>Race:</span> {{ character.race }}</p>
+                <p><span>Gender:</span> {{ character.gender }}</p>
+                <p><span>Profession:</span> {{ character.profession }}</p>
+                <p><span>Orientation:</span> {{ character.orientation }}</p>
+                <p><span>Age:</span> {{ character.age }} ({{ character.ageCategory }})</p>
+                <p><span>Height:</span> {{ character.height }}</p>
+                <p><span>Weight:</span> {{ character.weight }} lbs</p>
+                <p><span>Eyes:</span> {{ character.eyeColor }}</p>
+                <p><span>Hair:</span> {{ character.hairColor }}, {{ character.hairStyle }}</p>
+                <p><span>Face Shape:</span> {{ character.faceShape }}</p>
+                <p><span>Motivation:</span> {{ character.motivation }}</p>
+                <p><span>Hobby:</span> {{ character.hobby }}</p>
+
+                <p><span>Traits: </span></p>
+                <ul class="traits">
+                    <li v-for="trait in character.traits">{{ trait }}</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js"></script>
+
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                character: {}
+            },
+            methods: {
+                formatHeight(totalInches) {
+                    feet = Math.floor(totalInches/12)
+                    inches = totalInches % 12
+
+                    return feet + "'" + inches + "\""
+                },
+                refreshCharacter() {
+                    fetch('https://chargen.ironarachne.com/api')
+                    .then(response => response.json())
+                    .then(response => {
+                        this.character = response;
+                        this.character.height = this.formatHeight(this.character.height)
+                    })
+                    .catch(error => console.error(error));
+                }
+            }
+        })
+
+        app.refreshCharacter()
+    </script>
+</body>
+
+</html>
